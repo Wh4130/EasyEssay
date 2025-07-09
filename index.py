@@ -217,7 +217,7 @@ def main():
                     hide_index = True,
                     width = 1000)
         if st.button("Delete selected file", key = "delete_pdf", icon = ":material/delete:"):
-            with st.spinner("刪除中"):
+            with st.spinner("Deleting"):
                 st.session_state["pdfs_raw"] = preview_cache[preview_cache["selected"] == False]
                 st.rerun()
 

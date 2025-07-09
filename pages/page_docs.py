@@ -354,13 +354,13 @@ def main():
 # *** Authentication
 if st.session_state['logged_in'] == False:
     # * 登入頁面
-    st.info("Welcome！請登入或註冊，以繼續使用此工具")
+    st.info("Welcome! Please login or sign up to use the tool.")
     entry_l, entry_r = st.columns(2)
     with entry_l:
-        if st.button("登入", "login"):
+        if st.button("Login", "login"):
             UserManager.log_in()
     with entry_r:
-        if st.button("註冊", "register"):
+        if st.button("Sign Up", "register"):
             UserManager.register()
 
 else:
