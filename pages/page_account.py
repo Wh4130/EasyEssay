@@ -71,30 +71,30 @@ def main():
         st.caption(f"Logged in as: **{st.session_state['user_id']}**")
 
 
-    st.title("帳戶資訊")
+    st.title("User Info")
 
     st.dataframe(
         pd.DataFrame(
-            {"暱稱": [st.session_state['user_name']],
-             "使用者 id": [st.session_state['user_id']],
-             "電郵地址": [st.session_state['user_email']],
-             "註冊日時": [st.session_state['_registerTime']]}
+            {"Nickname": [st.session_state['user_name']],
+             "User ID": [st.session_state['user_id']],
+             "Gmail": [st.session_state['user_email']],
+             "Time for registration": [st.session_state['_registerTime']]}
         ),
         hide_index = True,
         width = 1000
     )
 
     # * 登出按鈕
-    if st.button("登出", "logout", icon = ":material/logout:"):
+    if st.button("Log Out", "logout", icon = ":material/logout:"):
         st.session_state['logged_in'] = False
-        st.success("登出成功")
+        st.success("Logged Out")
         for session in ["user_email", "user_id", "_registerTime"]:
             del st.session_state[session]
         time.sleep(2)
         st.rerun()
 
     # * 刪除帳號按鈕
-    if st.button("**:red[刪除帳號]**", "deregister", icon = ":material/report:"):
+    if st.button("**:red[Delete the Account]**", "deregister", icon = ":material/report:"):
         UserManager.deregister()
 
 
