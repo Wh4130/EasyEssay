@@ -1,13 +1,25 @@
 import streamlit as st
 import pandas as pd
-
+import time
 from utils.data_manager import DataManager
+from utils.llm_manager import ChatBot
 from utils.prompt_manager import PromptManager
 from utils.sheet_manager import SheetManager
 from utils.user_manager import UserManager
 from utils.docs_manager import PineconeManager
 from utils.others import Others
 
+st.set_page_config(page_title = "Easy Essay 文獻摘要工具", 
+                   page_icon = ":material/history_edu:", 
+                   layout="centered", 
+                   initial_sidebar_state = "auto", 
+                   menu_items={
+        'Get Help': None,
+        'Report a bug': "mailto:huang0jin@gmail.com",
+        'About': """- Model - **Gemini** 1.5 Flash
+- Database Design - Google Sheets
+- Developed by - **[Wally, Huang Lin Chun](https://antique-turn-ad4.notion.site/Wally-Huang-Lin-Chun-182965318fa7804c86bdde557fa376f4)**"""
+    })
 
 # * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # *** Session State Config
@@ -33,8 +45,11 @@ if "user_docs" not in st.session_state:
     st.session_state['user_docs'] = SheetManager.fetch(st.session_state["sheet_id"], "user_docs")
 
 if "user_tags" not in st.session_state:
-    st.session_state["user_tags"] = SheetManager.fetch(st.session_state["sheet_id"], "user_tags") 
-    
+    st.session_state["user_tags"] = SheetManager.fetch(st.session_state["sheet_id"], "user_tags")
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
 # * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # *** Sidebar Config
 with st.sidebar:
@@ -60,7 +75,6 @@ with st.sidebar:
 
     Others.fetch_IP()  
 
-
 # * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # *** HTML & CSS
 st.html("""<style>
@@ -69,42 +83,32 @@ div.stButton > button {
     height: 50px;
     margin-left: 0;
     margin-right: auto;
-}</style>
+}
+</style>
 """)
 
-# * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# *** main function
 def main():
+    st.title("Chat with Literature")
+    st.button("hehe")
+    for i, message in enumerate(st.session_state.messages):
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+            
+            
 
-    with st.sidebar:
-        st.caption(f"Logged in as: **{st.session_state['user_id']}**")
+    chatBot = ChatBot()
 
-
-    st.title("User Info")
-
-    st.dataframe(
-        pd.DataFrame(
-            {"Nickname": [st.session_state['user_name']],
-             "User ID": [st.session_state['user_id']],
-             "Gmail": [st.session_state['user_email']],
-             "Time for registration": [st.session_state['_registerTime']]}
-        ),
-        hide_index = True,
-        width = 1000
-    )
-
-    # * 登出按鈕
-    if st.button("Log Out", "logout", icon = ":material/logout:"):
-        st.session_state['logged_in'] = False
-        st.success("Logged Out")
-        for session in ["user_email", "user_id", "_registerTime"]:
-            del st.session_state[session]
-        time.sleep(2)
-        st.rerun()
-
-    # * 刪除帳號按鈕
-    if st.button("**:red[Delete the Account]**", "deregister", icon = ":material/report:"):
-        UserManager.deregister()
+    if prompt := st.chat_input("What is up?"):
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        # Display user message in chat message container
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        # Display assistant response in chat message container
+        with st.chat_message("assistant"):
+            stream = chatBot.apiCall(prompt)
+            response = st.write_stream(stream)
+        st.session_state.messages.append({"role": "assistant", "content": response})
 
 
 

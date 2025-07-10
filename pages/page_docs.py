@@ -1,5 +1,13 @@
 import streamlit as st
-from managers import *
+import pandas as pd
+import time
+from utils.data_manager import DataManager
+from utils.llm_manager import Summarizor
+from utils.prompt_manager import PromptManager
+from utils.sheet_manager import SheetManager
+from utils.user_manager import UserManager
+from utils.docs_manager import PineconeManager
+from utils.others import Others
 
 st.set_page_config(page_title = "Easy Essay 文獻摘要工具", 
                    page_icon = ":material/history_edu:", 
@@ -41,7 +49,6 @@ if "user_tags" not in st.session_state:
 
 # * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # *** Sidebar Config
-# *** Sidebar Config
 with st.sidebar:
     
     # * Icon & Title
@@ -60,6 +67,8 @@ with st.sidebar:
     if st.session_state["logged_in"]:
         st.page_link("index.py", label = 'Literature Summary Generator', icon = ":material/edit_square:")
         st.page_link("./pages/page_docs.py", label = 'Literature Summary Database', icon = ":material/folder_open:")
+        st.page_link("./pages/page_chat.py", label = 'Chat with Literature', icon = ":material/mark_chat_unread:")
+
 
     Others.fetch_IP()  
 

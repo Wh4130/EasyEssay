@@ -1,0 +1,96 @@
+from langchain_huggingface import HuggingFaceEmbeddings
+from pinecone import Pinecone, ServerlessSpec
+from langchain_pinecone import PineconeVectorStore, PineconeEmbeddings
+from langchain_text_splitters.character import RecursiveCharacterTextSplitter
+
+import os
+import streamlit as st 
+
+os.environ['PINECONE_API_KEY'] = st.secrets["credits"]["PINECONE"]
+
+
+
+
+    
+class PineconeManager():
+
+    def __init__(self) -> None:
+        self.pc = Pinecone(
+            api_key = os.environ['PINECONE_API_KEY']
+        )
+        self.embeddings = PineconeEmbeddings(
+            model="multilingual-e5-large",
+            pinecone_api_key = os.environ['PINECONE_API_KEY']
+        )
+        self.text_splitter = RecursiveCharacterTextSplitter(chunk_size = 500, chunk_overlap = 0)
+    
+    def create_index(self, index_name):
+        """
+        Normally not used as for this application.
+        """
+        if not self.pc.has_index(index_name):
+            self.pc.create_index_for_model(
+                name = index_name,
+                cloud = "aws",
+                region="us-east-1",
+                embed = {
+                    "model":"llama-text-embed-v2",
+                    "field_map":{"text": "chunk_text"}
+                }
+            )
+
+    """
+    def list_indexes():
+    """
+
+    # * Use the 'easyessay' index
+    def insert_docs(self, 
+                    texts: str, 
+                    namespace: str, 
+                    index_name: str):
+        
+        """
+        Note: namespace = LiteratureID. we can use this primary key to merge back to our Google Sheet
+        """
+
+        texts_ls = self.text_splitter.split_text(texts)
+
+        metadatas: list[dict] = [{"content": chunk} for chunk in texts_ls]
+        ids: list[str]        = [f"{namespace}_{i + 1}" for i in range(len(texts_ls))]
+
+        vectorstores = PineconeVectorStore.from_texts(
+            texts_ls, 
+            embedding  = self.embeddings,
+            index_name = index_name,
+            namespace  = namespace,
+            ids        = ids,
+            metadatas  = metadatas
+        )
+
+    def search(self, query, k, namespace: str, index_name: str):
+
+        vector_store = PineconeVectorStore(
+            index = self.pc.Index(index_name),  # your Pinecone index
+            embedding = self.embeddings,  # your embedding model
+            namespace = namespace
+        )
+
+        docs = vector_store.similarity_search(
+            query = query,
+            k = k,
+            namespace = namespace
+        )
+        return docs
+
+if __name__ == "__main__":
+    PC              = PineconeManager()
+    # print("inserting documents...")
+    # PC.insert_docs(
+    #     texts = "hello I am wally nice to meet you how are you doing? What's your major?",
+    #     namespace = "test",
+    #     index_name = "easyessay"
+    # )
+    print("searching most similar page...")
+    results = PC.search(query = "停車場收入", k = 5, namespace = "LGmZr75V", index_name = "easyessay")
+    print("most similar page:")
+    print(results)

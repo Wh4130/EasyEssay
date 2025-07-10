@@ -1,7 +1,17 @@
-from managers import *
+from utils.data_manager import DataManager
+from utils.llm_manager import Summarizor
+from utils.prompt_manager import PromptManager
+from utils.sheet_manager import SheetManager
+from utils.user_manager import UserManager
+from utils.docs_manager import PineconeManager
+from utils.others import Others
+
 import streamlit as st
 import datetime as dt
 import random
+import pandas as pd
+import json
+import time
 
 st.set_page_config(page_title = "Easy Essay - Literature Summary Database", 
                    page_icon = ":material/history_edu:", 
@@ -42,6 +52,12 @@ if "user_docs" not in st.session_state:
 if "user_tags" not in st.session_state:
     st.session_state["user_tags"] = SheetManager.fetch(st.session_state["sheet_id"], "user_tags") 
 
+if "pinecone" not in st.session_state:
+    st.session_state["pinecone"] = PineconeManager()
+
+if "pinecone_idx_name" not in st.session_state:
+    st.session_state["pinecone_idx_name"] = "easyessay"
+
 # * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # *** Sidebar Config
 with st.sidebar:
@@ -62,8 +78,10 @@ with st.sidebar:
     if st.session_state["logged_in"]:
         st.page_link("index.py", label = 'Literature Summary Generator', icon = ":material/edit_square:")
         st.page_link("./pages/page_docs.py", label = 'Literature Summary Database', icon = ":material/folder_open:")
+        st.page_link("./pages/page_chat.py", label = 'Chat with Literature', icon = ":material/mark_chat_unread:")
 
-    Others.fetch_IP()  
+
+    Others.fetch_IP()   
 
 # * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # *** HTML & CSS
@@ -126,32 +144,46 @@ def main():
             if sheet_id == None:
                 st.stop()
             
-            # * Initialize model
-            LlmManager.gemini_config()
+        
 
             # TODO 這段，未來會想要前後端分開寫，並用 async
             BOX_PREVIEW.empty()
             # ** Generate Summary
-            with st.spinner("Generating summary, please do not switch to other pages or close this page..."):
+            with st.spinner("Please do not switch to other pages or close this page..."):
                 to_update = pd.DataFrame(columns = ["_fileId", "_fileName", "_summary", "_generatedTime", "_length", "_userId", "_tag"])
                 progress_bar = st.progress(0, "(0%)Processing...")
+
                 for i, row in st.session_state['pdfs_raw'].iterrows():
                     filename = row['filename'].replace(" ", "_")
                     contents = "\n".join(row['content'])
                     progress_bar.progress(i / len(st.session_state['pdfs_raw']), f"({round(i / len(st.session_state['pdfs_raw']), 2) * 100}%)「{filename}」...")
-                    prompt = PromptManager.summarize(row["language"], row["additional_prompt"])
-                    model = LlmManager.init_gemini_model(prompt)
-                    response = LlmManager.gemini_api_call(model, contents)
-                    summary = DataManager.find_json_object(response)
+
+                    with st.spinner("Generating Summary..."):
+                        prompt = PromptManager.summarize(row["language"], row["additional_prompt"])
+                        model = Summarizor(language = row['language'], other_instruction = row["additional_prompt"])
+                        response = model.apiCall(contents)
+                        summary = Summarizor.find_json_object(response)
                     
-                    # * Update the generated summary to cache
-                    while True:
-                        docId = DataManager.generate_random_index()       #  Generate a random id for the doc
-                        if docId not in st.session_state["user_docs"]["_fileId"].tolist():
-                            to_update.loc[len(to_update), ["_fileId", "_fileName", "_summary", "_generatedTime", "_length", "_userId", "_tag"]] = [docId, filename, summary['summary'], dt.datetime.now().strftime("%I:%M%p on %B %d, %Y"), len(summary['summary']), st.session_state['user_id'], st.session_state["tag"]]
-                        break
-                    else:
-                        pass
+                    # * --- Update the generated summary to cache
+                    with st.spinner("Updating Summary..."):
+                        while True:
+                            fileID = DataManager.generate_random_index()       #  Generate a random id for the doc
+                            if fileID not in st.session_state["user_docs"]["_fileId"].tolist():
+                                to_update.loc[len(to_update), ["_fileId", "_fileName", "_summary", "_generatedTime", "_length", "_userId", "_tag"]] = [fileID, filename, summary['summary'], dt.datetime.now().strftime("%I:%M%p on %B %d, %Y"), len(summary['summary']), st.session_state['user_id'], st.session_state["tag"]]
+                            break
+                        else:
+                            pass
+
+                    # * --- Update the document to Pinecone Embedding Database
+                    with st.spinner("Upserting pdfs to Pinecone Embedding Database..."):
+                        st.session_state['pinecone'].insert_docs(
+                            texts = "   ".join(row['content']).replace("\n", ""),
+                            namespace = fileID,
+                            index_name = st.session_state['pinecone_idx_name']
+                        )
+                    
+                    
+
 
                 progress_bar.empty()
 
