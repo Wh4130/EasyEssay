@@ -1,4 +1,3 @@
-from langchain_huggingface import HuggingFaceEmbeddings
 from pinecone import Pinecone, ServerlessSpec
 from langchain_pinecone import PineconeVectorStore, PineconeEmbeddings
 from langchain_text_splitters.character import RecursiveCharacterTextSplitter
