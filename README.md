@@ -10,10 +10,10 @@
 <em>Crafting effortless literary insights for your success.</em>
 
 <!-- BADGES -->
-<img src="https://img.shields.io/github/license/Wh4130/EasyEssay.git?style=default&logo=opensourceinitiative&logoColor=white&color=0080ff" alt="license">
-<img src="https://img.shields.io/github/last-commit/Wh4130/EasyEssay.git?style=default&logo=git&logoColor=white&color=0080ff" alt="last-commit">
-<img src="https://img.shields.io/github/languages/top/Wh4130/EasyEssay.git?style=default&color=0080ff" alt="repo-top-language">
-<img src="https://img.shields.io/github/languages/count/Wh4130/EasyEssay.git?style=default&color=0080ff" alt="repo-language-count">
+<img src="https://img.shields.io/github/license/Wh4130/EasyEssay?style=default&logo=opensourceinitiative&logoColor=white&color=0080ff" alt="license">
+<img src="https://img.shields.io/github/last-commit/Wh4130/EasyEssay?style=default&logo=git&logoColor=white&color=0080ff" alt="last-commit">
+<img src="https://img.shields.io/github/languages/top/Wh4130/EasyEssay?style=default&color=0080ff" alt="repo-top-language">
+<img src="https://img.shields.io/github/languages/count/Wh4130/EasyEssay?style=default&color=0080ff" alt="repo-language-count">
 
 <!-- default option, no dependency badges. -->
 
@@ -27,56 +27,37 @@
 
 ## Table of Contents
 
-- [Table of Contents](#table-of-contents)
-- [Overview](#overview)
-- [Features](#features)
-- [Project Structure](#project-structure)
-    - [Project Index](#project-index)
-- [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Installation](#installation)
-    - [Usage](#usage)
-    - [Testing](#testing)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
-- [Acknowledgments](#acknowledgments)
+- [EASYESSAY.GIT](#easyessaygit)
+	- [Table of Contents](#table-of-contents)
+	- [Overview](#overview)
+	- [Project Structure](#project-structure)
+		- [Project Index](#project-index)
+	- [Acknowledgments](#acknowledgments)
 
 ---
 
 ## Overview
 
-**Why EasyEssay.git?**
+**Why EasyEssay?**
 
-This project revolutionizes literature summary creation and management. The core features include:
+This project transforms the literature review process by making academic research more accessible and interactive. The core features include:
 
-- **🚀 Comprehensive Model Overview:** Quickly grasp model functionalities without diving into technical details.
-- **💡 Seamless Google Integration:** Effortlessly manipulate data and ensure secure authentication.
-- **🔑 User Management:** Simplify user authentication, registration, and account handling.
-- **📊 Interactive Chat Interface:** Engage with document summaries and AI model responses seamlessly.
+- **📚 Streamlined Literature Review:** Accelerate your research process with organized literature management by tags and languages, making it easier to navigate and synthesize multiple sources.
 
----
+- **🤖 RAG-Powered Interactive Literature Chat:** Engage directly with your literature through an intelligent chat interface. Ask questions, extract insights, and explore concepts within your documents using advanced RAG (Retrieval-Augmented Generation) technology that prevents AI hallucination.
 
-## Features
+- **⚡ Flexible AI Model Selection:** Choose from multiple Gemini models (2.5-flash, 2.0-flash, etc.) based on your needs, ensuring optimal performance and cost-effectiveness for your specific use case.
 
-|      | Component       | Details                              |
-| :--- | :-------------- | :----------------------------------- |
-| ⚙️  | **Architecture**  | <ul><li>Follows a modular design with clear separation of concerns</li><li>Uses design patterns such as Factory, Singleton, or Observer</li></ul> |
-| 🔩 | **Code Quality**  | <ul><li>Consistent coding style adhering to PEP 8 guidelines</li><li>Includes unit tests covering major functionalities</li></ul> |
-| 📄 | **Documentation** | <ul><li>Comprehensive README.md with setup instructions and usage examples</li><li>Inline code comments explaining complex logic</li></ul> |
-| 🔌 | **Integrations**  | <ul><li>Integration with Jupyter Notebook for interactive data analysis</li><li>Uses Google APIs for authentication and data manipulation</li></ul> |
-| 🧩 | **Modularity**    | <ul><li>Separate modules for data processing, model training, and result visualization</li><li>Easy to extend or modify existing functionality</li></ul> |
-| 🧪 | **Testing**       | <ul><li>Includes unit tests for critical functions and integration tests for end-to-end scenarios</li><li>Uses tools like pytest for automated testing</li></ul> |
-| ⚡️  | **Performance**   | <ul><li>Optimized algorithms for text processing and analysis</li><li>Efficient data structures for handling large datasets</li></ul> |
-| 🛡️ | **Security**      | <ul><li>Secure handling of user credentials and sensitive data</li><li>Regular security audits to identify and fix vulnerabilities</li></ul> |
-| 📦 | **Dependencies**  | <ul><li>Well-managed dependencies listed in requirements.txt</li><li>Uses virtual environments to isolate project dependencies</li></ul> |
+- **👤 Personalized Research Environment:** Maintain your own secure account with personalized literature collections, chat histories, and research progress tracking.
+
+**Transform your literature review from a tedious process into an interactive, AI-enhanced research experience that helps you understand and synthesize academic content more effectively.**
 
 ---
 
 ## Project Structure
 
 ```sh
-└── EasyEssay.git/
+└── EasyEssay/
     ├── index.py
     ├── managers.py
     ├── pages
@@ -87,7 +68,6 @@ This project revolutionizes literature summary creation and management. The core
     │   └── icon.png
     ├── requirements.txt
     ├── test.py
-    ├── tests.ipynb
     └── utils
         ├── constants.py
         ├── data_manager.py
@@ -117,24 +97,8 @@ This project revolutionizes literature summary creation and management. The core
 				</tr>
 			</thead>
 				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='https://github.com/Wh4130/EasyEssay.git/blob/master/tests.ipynb'>tests.ipynb</a></b></td>
-					<td style='padding: 8px;'>- SummaryThe <code>tests.ipynb</code> file provides a comprehensive overview of the models available in the project, including their names, display names, and supported methods<br>- It serves as a reference point for understanding the capabilities of each model within the codebase architecture<br>- This file is crucial for developers and users to quickly grasp the functionalities offered by different models without delving into technical implementation details.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='https://github.com/Wh4130/EasyEssay.git/blob/master/requirements.txt'>requirements.txt</a></b></td>
-					<td style='padding: 8px;'>- Enable seamless integration with Google services for data manipulation and authentication<br>- This file specifies required dependencies for the project, including libraries for spreadsheet handling, data processing, and authentication.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
 					<td style='padding: 8px;'><b><a href='https://github.com/Wh4130/EasyEssay.git/blob/master/index.py'>index.py</a></b></td>
 					<td style='padding: 8px;'>- The <code>index.py</code> file in the project serves as the main entry point for the Easy Essay-Literature Summary Database tool<br>- It manages user sessions, data storage, and interaction with various utility modules for document summarization and management<br>- The file orchestrates the generation of literature summaries, handles user authentication, and provides a user-friendly interface for navigating different tool functionalities<br>- It plays a crucial role in the overall functionality and user experience of the application.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='https://github.com/Wh4130/EasyEssay.git/blob/master/test.py'>test.py</a></b></td>
-					<td style='padding: 8px;'>- Generate random alphanumeric strings for data indexing in the projects architecture<br>- The code imports necessary modules, initializes configurations, and interacts with the Gemini API<br>- It showcases data manipulation functions and a test method<br>- This script aids in generating unique identifiers for data management within the project structure.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='https://github.com/Wh4130/EasyEssay.git/blob/master/managers.py'>managers.py</a></b></td>
-					<td style='padding: 8px;'>- Project SummaryThe <code>managers.py</code> file in the project architecture serves as a crucial component for managing various functionalities related to the Gemini AI model<br>- It includes methods for configuring the Gemini API, initializing the Gemini model with specific parameters, and making API calls to interact with the model<br>- This file encapsulates the logic for integrating the Gemini AI capabilities into the broader project ecosystem, enabling seamless communication with the AI model for generating outputs based on given inputs.</td>
 				</tr>
 			</table>
 		</blockquote>
@@ -161,10 +125,6 @@ This project revolutionizes literature summary creation and management. The core
 					<td style='padding: 8px;'>- Manage user authentication, registration, and account deletion<br>- Handle password hashing, verification, and user data interactions<br>- Utilize Google Sheets for user data storage and retrieval<br>- Ensure secure login and registration processes<br>- Provide functionality for users to delete their accounts securely.</td>
 				</tr>
 				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='https://github.com/Wh4130/EasyEssay.git/blob/master/utils/constants.py'>constants.py</a></b></td>
-					<td style='padding: 8px;'>Define gemini model list constants for the project architecture.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
 					<td style='padding: 8px;'><b><a href='https://github.com/Wh4130/EasyEssay.git/blob/master/utils/prompt_manager.py'>prompt_manager.py</a></b></td>
 					<td style='padding: 8px;'>- The <code>PromptManager</code> class in <code>utils/prompt_manager.py</code> generates detailed summaries and answers based on provided literature, ensuring strict adherence to source materials and user-friendly explanations<br>- It facilitates precise summarization in JSON format, highlighting keywords and source page numbers<br>- Additionally, it assists in answering questions with comprehensive explanations, specific examples, and technical content, all while maintaining factual accuracy and user-friendly language.</td>
 				</tr>
@@ -174,15 +134,15 @@ This project revolutionizes literature summary creation and management. The core
 				</tr>
 				<tr style='border-bottom: 1px solid #eee;'>
 					<td style='padding: 8px;'><b><a href='https://github.com/Wh4130/EasyEssay.git/blob/master/utils/llm_manager.py'>llm_manager.py</a></b></td>
-					<td style='padding: 8px;'>- The <code>llm_manager.py</code> file in the <code>utils</code> directory defines classes for summarization and chatbot functionalities using the GenAI API<br>- The <code>Summarizor</code> class handles text summarization based on a specified model, while the <code>ChatBot</code> class facilitates interactive conversations with configurable parameters<br>- These classes encapsulate logic for generating content and managing AI models seamlessly within the project architecture.</td>
-				</tr>
-				<tr style='border-bottom: 1px solid #eee;'>
-					<td style='padding: 8px;'><b><a href='https://github.com/Wh4130/EasyEssay.git/blob/master/utils/others.py'>others.py</a></b></td>
-					<td style='padding: 8px;'>Retrieve and display the deployed IP address using the public IP API.</td>
+					<td style='padding: 8px;'>- Define classes for summarization and chatbot functionalities using the GenAI API<br>- The <code>Summarizor</code> class handles text summarization based on a specified model, while the <code>ChatBot</code> class facilitates interactive conversations with configurable parameters<br>- These classes encapsulate logic for generating content and managing AI models seamlessly within the project architecture.</td>
 				</tr>
 				<tr style='border-bottom: 1px solid #eee;'>
 					<td style='padding: 8px;'><b><a href='https://github.com/Wh4130/EasyEssay.git/blob/master/utils/data_manager.py'>data_manager.py</a></b></td>
 					<td style='padding: 8px;'>- The <code>data_manager.py</code> file orchestrates PDF handling, JSON parsing, image conversion, and chat history compilation within the project<br>- It facilitates PDF uploads, language selection, and tag categorization, ensuring efficient data processing and storage<br>- Additionally, it offers functions for loading PDF content, extracting JSON objects, converting images to Base64, generating random indices, and compiling chat histories into Excel format.</td>
+				</tr>
+				<tr style='border-bottom: 1px solid #eee;'>
+					<td style='padding: 8px;'><b><a href='https://github.com/Wh4130/EasyEssay.git/blob/master/utils/constants.py'>constants.py</a></b></td>
+					<td style='padding: 8px;'>Define constant variables, such as gemini model list, for the project architecture.</td>
 				</tr>
 			</table>
 		</blockquote>
@@ -202,11 +162,11 @@ This project revolutionizes literature summary creation and management. The core
 			</thead>
 				<tr style='border-bottom: 1px solid #eee;'>
 					<td style='padding: 8px;'><b><a href='https://github.com/Wh4130/EasyEssay.git/blob/master/pages/page_chat.py'>page_chat.py</a></b></td>
-					<td style='padding: 8px;'>- The <code>page_chat.py</code> file in the project architecture sets up a chat interface for interacting with literature summaries<br>- It manages user sessions, document selection, and chat history<br>- Users can select documents, ask questions, and receive responses based on AI models and document summaries<br>- The file also handles system prompts, model selection, and chat history downloads<br>- Additionally, it includes authentication logic for user login and registration.</td>
+					<td style='padding: 8px;'>- Set up a chat interface for interacting with literature summaries<br>- It manages user sessions, document selection, and chat history<br>- Users can select documents, ask questions, and receive responses based on AI models and document summaries<br>- The file also handles system prompts, model selection, and chat history downloads</td>
 				</tr>
 				<tr style='border-bottom: 1px solid #eee;'>
 					<td style='padding: 8px;'><b><a href='https://github.com/Wh4130/EasyEssay.git/blob/master/pages/page_docs.py'>page_docs.py</a></b></td>
-					<td style='padding: 8px;'>- SummaryThe <code>page_docs.py</code> file in the project serves as a central component for managing and displaying documentation related to the Easy Essay 文獻摘要工具 application<br>- It leverages Streamlit to create an interactive and user-friendly interface for users to access and interact with various documents and summaries<br>- The file integrates with different utility modules such as data management, summarization, prompts, and user management to provide a seamless experience<br>- Additionally, it includes configuration settings for the page layout and menu items, enhancing the overall usability of the application.</td>
+					<td style='padding: 8px;'>- SummaryThe <code>page_docs.py</code> file in the project serves as a central component for managing and displaying documentation related to the EasyEssay literature summary generator application<br>- It leverages Streamlit to create an interactive and user-friendly interface for users to access and interact with various documents and summaries<br>- The file integrates with different utility modules such as data management, summarization, prompts, and user management to provide a seamless experience<br>- Additionally, it includes configuration settings for the page layout and menu items, enhancing the overall usability of the application.</td>
 				</tr>
 				<tr style='border-bottom: 1px solid #eee;'>
 					<td style='padding: 8px;'><b><a href='https://github.com/Wh4130/EasyEssay.git/blob/master/pages/page_account.py'>page_account.py</a></b></td>
@@ -218,7 +178,7 @@ This project revolutionizes literature summary creation and management. The core
 </details>
 
 ---
-
+<!-- 
 ## Getting Started
 
 ### Prerequisites
@@ -246,11 +206,11 @@ Build EasyEssay.git from the source and intsall dependencies:
 
 3. **Install the dependencies:**
 
-<!-- SHIELDS BADGE CURRENTLY DISABLED -->
-	<!-- [![pip][pip-shield]][pip-link] -->
-	<!-- REFERENCE LINKS -->
-	<!-- [pip-shield]: https://img.shields.io/badge/Pip-3776AB.svg?style={badge_style}&logo=pypi&logoColor=white -->
-	<!-- [pip-link]: https://pypi.org/project/pip/ -->
+SHIELDS BADGE CURRENTLY DISABLED
+	[![pip][pip-shield]][pip-link]
+	REFERENCE LINKS
+	[pip-shield]: https://img.shields.io/badge/Pip-3776AB.svg?style={badge_style}&logo=pypi&logoColor=white
+	[pip-link]: https://pypi.org/project/pip/
 
 	**Using [pip](https://pypi.org/project/pip/):**
 
@@ -274,9 +234,9 @@ Easyessay.git uses the {__test_framework__} test framework. Run the test suite w
 **Using [pip](https://pypi.org/project/pip/):**
 ```sh
 pytest
-```
+``` -->
 
----
+<!-- ---
 
 ## Roadmap
 
@@ -333,7 +293,7 @@ pytest
 
 Easyessay.git is protected under the [LICENSE](https://choosealicense.com/licenses) License. For more details, refer to the [LICENSE](https://choosealicense.com/licenses/) file.
 
----
+--- -->
 
 ## Acknowledgments
 
