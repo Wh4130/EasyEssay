@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import time
 
 from utils.data_manager import DataManager
 from utils.prompt_manager import PromptManager
@@ -48,7 +49,7 @@ with st.sidebar:
     with text_box:
         st.write(" ")
         st.header("Easy Essay")
-        st.caption(f"**Literature Summary Database**")
+        st.caption(f"**Literature Review Tool**")
 
     # * Pages
     st.page_link("./pages/page_account.py", label = 'Account', icon = ":material/account_circle:")
@@ -97,7 +98,7 @@ def main():
     if st.button("Log Out", "logout", icon = ":material/logout:"):
         st.session_state['logged_in'] = False
         st.success("Logged Out")
-        for session in ["user_email", "user_id", "_registerTime"]:
+        for session in ["user_email", "user_id", "_registerTime", "messages"]:
             del st.session_state[session]
         time.sleep(2)
         st.rerun()

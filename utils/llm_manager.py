@@ -14,6 +14,7 @@ from google.genai import types
 import json 
 import numpy as np
 from utils.prompt_manager import PromptManager
+from utils.docs_manager import PineconeManager
 
 try: 
     GEMINI_KEY = dotenv_values()['GEMINI']
@@ -47,9 +48,7 @@ class Summarizor():
             max_output_tokens= 40000,
             top_k= 2,
             top_p= 0.5,
-            temperature= 0.5,
-            response_mime_type= 'application/json',
-            stop_sequences = ['\n'],
+            temperature= 0,
             thinking_config = types.ThinkingConfig(thinking_budget=self.thinking_budget)
         )
         
@@ -81,27 +80,58 @@ class Summarizor():
     
 class ChatBot():
 
-    def __init__(self, model_key = "gemini-2.5-flash", thinking_budget = 0):
-        self.client = genai.Client(api_key = GEMINI_KEY)
-        self.model_key = model_key
-        self.system_prompt = PromptManager.chat() # TODO
+    def __init__(self, 
+                 model_key = "gemini-2.5-flash", 
+                 thinking_budget = 0,
+                 temperature = 0,
+                 RAG = True):
+        self.client          = genai.Client(api_key = GEMINI_KEY)
+        self.pc              = PineconeManager()
+        self.model_key       = model_key
+        self.RAG             = RAG
         self.thinking_budget = thinking_budget
-        self.config = types.GenerateContentConfig(
-            system_instruction = self.system_prompt,
+        self.temperature     = temperature
+
+    def changeTemperature(self, new_temperature):
+        self.temperature = new_temperature
+
+
+    def checkRagAvailability(self, doc_id):
+        all_docIDs = self.pc.list_namespaces("easyessay")
+        if doc_id not in all_docIDs:
+            return False 
+        else:
+            return True
+        
+    def changeModel(self, new_model_key):
+        self.model_key = new_model_key
+
+    def apiCall(self, in_message, similar_text_ls, doc_summary = None, additional_prompt = None):
+        
+        instruction = PromptManager.chat_rag(doc_summary, similar_text_ls)
+
+        if additional_prompt:
+            instruction += "\n\n" + additional_prompt
+        
+        # * Set config 
+        config = types.GenerateContentConfig(
+            system_instruction = instruction,
             max_output_tokens= 40000,
             top_k= 2,
             top_p= 0.5,
-            temperature= 0,
-            thinking_config = types.ThinkingConfig(thinking_budget=thinking_budget)
+            temperature= self.temperature,
+            thinking_config = types.ThinkingConfig(thinking_budget= self.thinking_budget)
         )
 
-    def apiCall(self, in_message):
 
+        # * Call API
         response_stream =  self.client.models.generate_content_stream(
             model    = self.model_key,
             contents = in_message,
-            config   = self.config
+            config   = config
         )
+
+        # * Get Response
         for chunk in response_stream:
             # Extract text from the complex response structure
             if hasattr(chunk, 'candidates') and chunk.candidates:
@@ -110,4 +140,5 @@ class ChatBot():
                     if hasattr(candidate.content, 'parts') and candidate.content.parts:
                         for part in candidate.content.parts:
                             if hasattr(part, 'text') and part.text:
+                                # * Generator type
                                 yield part.text

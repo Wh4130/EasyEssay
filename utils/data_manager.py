@@ -4,6 +4,8 @@ import json
 import base64
 import string
 import random
+import pandas as pd
+import io
 
 class DataManager:
 
@@ -76,3 +78,71 @@ class DataManager:
     def generate_random_index():
         characters = string.ascii_letters + string.digits  # a-z, A-Z, 0-9
         return ''.join(random.choices(characters, k = 8))
+    
+    # --- Compile all chat histories for all literatures
+    # def compile_chat_histories(chat_histories: dict[dict]) -> pd.DataFrame:
+    #     output = io.BytesIO()
+
+    #     with pd.ExcelWriter(output, engine = "openpyxl") as writer:
+    #         for doc_id, doc_data in chat_histories.items():
+    #             if doc_data["chat_history"] != []:
+    #                 sheet_name = str(doc_data["doc_name"]).replace('/', '_').replace('\\', '_')[:31]
+    #                 result_df = pd.DataFrame(columns = ["role", "content"])
+                    
+    #                 for chat_object in doc_data["chat_history"]:
+    #                     result_df.loc[len(result_df), ["role", "content"]] = [
+    #                         chat_object["role"],
+    #                         chat_object["content"]
+    #                     ]
+    #                 result_df.to_excel(writer, sheet_name = sheet_name, index = False)
+
+    #     output.seek(0)
+
+    #     return output
+    
+    def compile_chat_histories(chat_histories: dict[dict]) -> io.BytesIO:
+        output = io.BytesIO()
+        
+        # 檢查是否有任何非空的聊天歷史
+        has_chat_data = any(
+            doc_data.get("chat_history", []) 
+            for doc_data in chat_histories.values()
+        )
+        
+        with pd.ExcelWriter(output, engine="openpyxl") as writer:
+            sheets_created = 0
+            
+            for doc_id, doc_data in chat_histories.items():
+                chat_history = doc_data.get("chat_history", [])
+                
+                if chat_history:  # 只處理非空的聊天歷史
+                    sheet_name = str(doc_data.get("doc_name", f"Doc_{doc_id}")).replace('/', '_').replace('\\', '_')[:31]
+                    
+                    # 創建 DataFrame
+                    result_df = pd.DataFrame(columns=["role", "content", "time", "model"])
+                    
+                    # 填充數據
+                    for chat_object in chat_history:
+                        if isinstance(chat_object, dict) and "role" in chat_object and "content" in chat_object:
+                            result_df.loc[len(result_df)] = [
+                                chat_object["role"],
+                                chat_object["content"],
+                                chat_object["time"],
+                                chat_object["model"]
+                            ]
+                    
+                    # 寫入工作表
+                    result_df.to_excel(writer, sheet_name=sheet_name, index=False)
+                    sheets_created += 1
+            
+            # 如果沒有創建任何工作表，創建一個空的佔位符工作表
+            if sheets_created == 0:
+                placeholder_df = pd.DataFrame({
+                    "Message": ["No chat history available"],
+                    "Note": ["All chat histories are empty"]
+                })
+                placeholder_df.to_excel(writer, sheet_name="No_Data", index=False)
+        
+        output.seek(0)
+        return output
+

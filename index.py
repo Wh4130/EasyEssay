@@ -58,6 +58,17 @@ if "pinecone" not in st.session_state:
 if "pinecone_idx_name" not in st.session_state:
     st.session_state["pinecone_idx_name"] = "easyessay"
 
+if "messages" not in st.session_state:
+    st.session_state["messages"] = {
+        row["_fileId"]: {
+            "doc_id": row["_fileId"],
+            "doc_name": row["_fileName"],
+            "doc_summary": row["_summary"],
+            "chat_history": []
+        }
+        for _, row in st.session_state['user_docs'].iterrows()
+    }
+
 # * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # *** Sidebar Config
 with st.sidebar:
@@ -71,7 +82,7 @@ with st.sidebar:
     with text_box:
         st.write(" ")
         st.header("Easy Essay")
-        st.caption(f"**Literature Summary Database**")
+        st.caption(f"**Literature Review Tool**")
 
     # * Pages
     st.page_link("./pages/page_account.py", label = 'Account', icon = ":material/account_circle:")
@@ -177,10 +188,17 @@ def main():
                     # * --- Update the document to Pinecone Embedding Database
                     with st.spinner("Upserting pdfs to Pinecone Embedding Database..."):
                         st.session_state['pinecone'].insert_docs(
-                            texts = "   ".join(row['content']).replace("\n", ""),
+                            texts = row['content'],
                             namespace = fileID,
                             index_name = st.session_state['pinecone_idx_name']
                         )
+                        # initialize chat history container
+                        st.session_state['messages'][fileID] =  {
+                            "doc_id": fileID,
+                            "doc_name": filename,
+                            "doc_summary": summary,
+                            "chat_history": []
+                        }
                     
                     
 

@@ -60,7 +60,7 @@ with st.sidebar:
     with text_box:
         st.write(" ")
         st.header("Easy Essay")
-        st.caption(f"**Literature Summary Database**")
+        st.caption(f"**Literature Review Tool**")
 
     # * Pages
     st.page_link("./pages/page_account.py", label = 'Account', icon = ":material/account_circle:")
@@ -106,10 +106,13 @@ def main():
 
     # *** 文件摘要檢閱 ***
     with TAB_READ:
-        selected_tag = st.selectbox("請選擇類別標籤", [key.replace(" ", "_") for key in st.session_state['user_tags'][st.session_state['user_tags']['_userId'] == st.session_state["user_id"]]['_tag']])
+        read_c1, read_c2 = st.columns(2)
+        with read_c1:
+            selected_tag = st.selectbox("請選擇類別標籤", [key.replace(" ", "_") for key in st.session_state['user_tags'][st.session_state['user_tags']['_userId'] == st.session_state["user_id"]]['_tag']])
         XOR1 = st.session_state['user_docs']['_userId'] == st.session_state["user_id"]     # 篩出該 user 之文件
         XOR2 = st.session_state['user_docs']["_tag"] == selected_tag                       # 篩出該 user 之 tag
-        selected_file = st.selectbox("請選擇文件", [key.replace(" ", "_") for key in st.session_state['user_docs'][XOR1 & XOR2]['_fileName']])
+        with read_c2:
+            selected_file = st.selectbox("請選擇文件", [key.replace(" ", "_") for key in st.session_state['user_docs'][XOR1 & XOR2]['_fileName']])
         
         with st.spinner("loading"):
             try:

@@ -12,6 +12,9 @@ os.environ['PINECONE_API_KEY'] = st.secrets["credits"]["PINECONE"]
 
     
 class PineconeManager():
+    """
+    In RAG structure, will be used in llm_manager.py to retrieve the most similar k documents as the additional contextual information added to the prompt template
+    """
 
     def __init__(self) -> None:
         self.pc = Pinecone(
@@ -22,6 +25,13 @@ class PineconeManager():
             pinecone_api_key = os.environ['PINECONE_API_KEY']
         )
         self.text_splitter = RecursiveCharacterTextSplitter(chunk_size = 500, chunk_overlap = 0)
+
+    def list_namespaces(self, index_name):
+
+        index = self.pc.Index(index_name)
+
+        return [namespace.name for namespace in index.list_namespaces()]
+            
     
     def create_index(self, index_name):
         """
@@ -79,6 +89,11 @@ class PineconeManager():
             k = k,
             namespace = namespace
         )
+
+        docs = [
+            doc.page_content for doc in docs
+        ]
+
         return docs
 
 if __name__ == "__main__":
@@ -90,6 +105,6 @@ if __name__ == "__main__":
     #     index_name = "easyessay"
     # )
     print("searching most similar page...")
-    results = PC.search(query = "停車場收入", k = 5, namespace = "LGmZr75V", index_name = "easyessay")
+    results = PC.search(query = "停車場收入", k = 10, namespace = "LGmZr75V", index_name = "easyessay")
     print("most similar page:")
     print(results)
