@@ -138,12 +138,15 @@ def ConfigLiterature():
     XOR2 = st.session_state['user_docs']["_tag"] == selected_tag                       # 篩出該 user 之 tag
     selected_file = st.selectbox(":material/book_ribbon: Select a file to chat", [key.replace(" ", "_") for key in st.session_state['user_docs'][XOR1 & XOR2]['_fileName']])
 
-    doc_id = st.session_state['user_docs'].loc[st.session_state['user_docs']['_fileName'] == selected_file, '_fileId'].tolist()[0]
-    summary = st.session_state['user_docs'].loc[st.session_state['user_docs']['_fileName'] == selected_file, '_summary'].tolist()[0]
+    if selected_file:
+        doc_id = st.session_state['user_docs'].loc[st.session_state['user_docs']['_fileName'] == selected_file, '_fileId'].tolist()[0]
+        summary = st.session_state['user_docs'].loc[st.session_state['user_docs']['_fileName'] == selected_file, '_summary'].tolist()[0]
 
-    st.session_state['chat_params']["doc_id"] = doc_id
-    st.session_state['chat_params']["summary"] = summary
-
+        st.session_state['chat_params']["doc_id"] = doc_id
+        st.session_state['chat_params']["summary"] = summary
+    else:
+        st.session_state['chat_params']["doc_id"] = None
+        st.session_state['chat_params']["summary"] = None
 # * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # *** Function that allows modification for LLM setting
 def ConfigLLM():
@@ -224,8 +227,16 @@ def main():
         st.caption(f"Logged in as: **{st.session_state['user_id']}**")
 
     st.title("Chat with Literature")
+    if not st.session_state['chat_params']["doc_id"]:
+            st.warning("There is no literature under the selected tag. Please upload the literature in **Literature Sumary Generator** under the tag or choose other tags.")
+            st.stop()
+
+
     with st.container(border = True):
         st.markdown(st.session_state['chat_params']['summary'], unsafe_allow_html = True)
+
+    
+    
 
     if st.session_state.messages[st.session_state['chat_params']['doc_id']]['chat_history'] == []:
         with st.chat_message("assistant", avatar = st.session_state["characters"]["assistant"]):
