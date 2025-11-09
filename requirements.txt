@@ -2,6 +2,7 @@ gspread
 pandas
 datetime
 oauth2client
+openpyxl
 python-dotenv
 pypdf
 google-generativeai
