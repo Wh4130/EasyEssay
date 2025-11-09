@@ -11,6 +11,7 @@ import datetime as dt
 import random
 import pandas as pd
 import json
+import requests
 import time
 
 st.set_page_config(page_title = "Easy Essay - Literature Summary Database", 
@@ -160,30 +161,42 @@ def main():
             # TODO 這段，未來會想要前後端分開寫，並用 async
             BOX_PREVIEW.empty()
             # ** Generate Summary
-            with st.spinner("Please do not switch to other pages or close this page..."):
+            with st.spinner("Uploading documents..."):
                 to_update = pd.DataFrame(columns = ["_fileId", "_fileName", "_summary", "_generatedTime", "_length", "_userId", "_tag"])
                 progress_bar = st.progress(0, "(0%)Processing...")
 
                 for i, row in st.session_state['pdfs_raw'].iterrows():
-                    filename = row['filename'].replace(" ", "_")
-                    contents = "\n".join(row['content'])
-                    progress_bar.progress(i / len(st.session_state['pdfs_raw']), f"({round(i / len(st.session_state['pdfs_raw']), 2) * 100}%)「{filename}」...")
+                    # generating unique index
+                    while True:
+                        fileID = DataManager.generate_random_index() 
+                        if fileID not in st.session_state["user_docs"]["_fileId"].tolist():
+                            break
 
-                    with st.spinner("Generating Summary..."):
-                        prompt = PromptManager.summarize(row["language"], row["additional_prompt"])
-                        model = Summarizor(language = row['language'], other_instruction = row["additional_prompt"])
-                        response = model.apiCall(contents)
-                        summary = Summarizor.find_json_object(response)
+                    # create data instance by schema 
+                    doc_data_json = {
+                        "fileid": fileID,
+                        "filename": row['filename'].replace(" ", "_"),
+                        "content": "\n".join(row['content']),
+                        "user_id": st.session_state['user_id'],
+                        "tag": row['tag'],
+                        "lang": row['language'],
+                        "additional_prompt": row['additional_prompt']
+                    }
+
+                    progress_bar.progress(i / len(st.session_state['pdfs_raw']), f"({round(i / len(st.session_state['pdfs_raw']), 2) * 100}%)「{row['filename'].replace(" ", "_")}」...")
+
+                    # with st.spinner("Generating Summary..."):
+                    #     prompt = PromptManager.summarize(row["language"], row["additional_prompt"])
+                    #     model = Summarizor(language = row['language'], other_instruction = row["additional_prompt"])
+                    #     response = model.apiCall(contents)
+                    #     summary = Summarizor.find_json_object(response)
+
+                    # * --- Send request to generate summary in background
+                    response = requests.post("https://easyessaybackend.onrender.com/summarize", json = doc_data_json)
                     
                     # * --- Update the generated summary to cache
-                    with st.spinner("Updating Summary..."):
-                        while True:
-                            fileID = DataManager.generate_random_index()       #  Generate a random id for the doc
-                            if fileID not in st.session_state["user_docs"]["_fileId"].tolist():
-                                to_update.loc[len(to_update), ["_fileId", "_fileName", "_summary", "_generatedTime", "_length", "_userId", "_tag"]] = [fileID, filename, summary['summary'], dt.datetime.now().strftime("%I:%M%p on %B %d, %Y"), len(summary['summary']), st.session_state['user_id'], st.session_state["tag"]]
-                            break
-                        else:
-                            pass
+                    # to_update.loc[len(to_update), ["_fileId", "_fileName", "_summary", "_generatedTime", "_length", "_userId", "_tag"]] = [fileID, doc_data_json["filename"], "PENDING", dt.datetime.now().strftime("%I:%M%p on %B %d, %Y"), "", st.session_state['user_id'], st.session_state["tag"]]
+
 
                     # * --- Update the document to Pinecone Embedding Database
                     with st.spinner("Upserting pdfs to Pinecone Embedding Database..."):
@@ -195,8 +208,8 @@ def main():
                         # initialize chat history container
                         st.session_state['messages'][fileID] =  {
                             "doc_id": fileID,
-                            "doc_name": filename,
-                            "doc_summary": summary,
+                            "doc_name": doc_data_json["filename"],
+                            "doc_summary": "",
                             "chat_history": []
                         }
                     
@@ -205,18 +218,18 @@ def main():
 
                 progress_bar.empty()
 
-            # ** Update to database
-            with st.spinner("Updating to database..."):
-                # * acquire a lock  
-                SheetManager.acquire_lock(st.session_state["sheet_id"], "user_docs")
-                # * update
-                for _, row in to_update.iterrows():
-                    SheetManager.insert(sheet_id, "user_docs", row.tolist())
-                # * release the lock
-                SheetManager.release_lock(st.session_state["sheet_id"], "user_docs")
+            # # ** Update to database
+            # with st.spinner("Updating to database..."):
+            #     # * acquire a lock  
+            #     SheetManager.acquire_lock(st.session_state["sheet_id"], "user_docs")
+            #     # * update
+            #     for _, row in to_update.iterrows():
+            #         SheetManager.insert(sheet_id, "user_docs", row.tolist())
+            #     # * release the lock
+            #     SheetManager.release_lock(st.session_state["sheet_id"], "user_docs")
             
             # ** Complete message
-            st.success("Done! Please check the result in Literature Summary Database")
+            st.success("All uploaded documents are being summarized in background. Please go to 『Literature Summary Database』 page to check the status later.")
             time.sleep(1.5)
             del st.session_state["user_docs"]
             del to_update
